@@ -69,7 +69,7 @@ const App: React.FC = () => {
 
   const handleFileChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setFile: React.Dispatch<React.SetStateAction<File | null>>,
+    setFile: React.Dispatch<React.SetStateAction<File | null>>
   ) => {
     if (event.target.files && event.target.files.length > 0) {
       setFile(event.target.files[0]);
@@ -158,7 +158,7 @@ const App: React.FC = () => {
     } catch (error) {
       console.error("Ошибка при обработке файлов:", error);
       alert(
-        "Ошибка при чтении файлов. Проверьте, что это корректные .xlsx-файлы.",
+        "Ошибка при чтении файлов. Проверьте, что это корректные .xlsx-файлы."
       );
     } finally {
       setLoading(false);
@@ -231,23 +231,23 @@ const App: React.FC = () => {
 
   // === Уникальные значения для фильтров ===
   const uniqueAddresses = Array.from(
-    new Set(allRows.map((r) => r.data["Column 4"]).filter(Boolean)),
+    new Set(allRows.map((r) => r.data["Column 4"]).filter(Boolean))
   ).sort();
 
   const uniqueFloors = Array.from(
-    new Set(allRows.map((r) => r.data["Column 13"]).filter(Boolean)),
+    new Set(allRows.map((r) => r.data["Column 13"]).filter(Boolean))
   ).sort();
 
   const uniqueCities = Array.from(
-    new Set(allRows.map((r) => r.city).filter(Boolean)),
+    new Set(allRows.map((r) => r.city).filter(Boolean))
   ).sort();
 
   const uniqueQuantities = Array.from(
     new Set(
       allRows
         .map((r) => String(r.quantity))
-        .filter((q) => q !== "null" && q !== "undefined" && q !== ""),
-    ),
+        .filter((q) => q !== "null" && q !== "undefined" && q !== "")
+    )
   ).sort((a, b) => Number(a) - Number(b));
 
   // Собираем все типы изменений (названия полей)
@@ -259,7 +259,7 @@ const App: React.FC = () => {
       const oldData = diff.old;
       const newData = diff.new;
       const changedFields = requiredColumns.filter(
-        (key) => JSON.stringify(oldData[key]) !== JSON.stringify(newData[key]),
+        (key) => JSON.stringify(oldData[key]) !== JSON.stringify(newData[key])
       );
       changedFields.forEach((key) => {
         const label = columnLabels[key];
@@ -337,7 +337,7 @@ const App: React.FC = () => {
 
           const changedLabels = changedFields.map((key) => columnLabels[key]);
           matchesChangeType = changedLabels.some((label) =>
-            filters.changeType.has(label),
+            filters.changeType.has(label)
           );
         }
       }
@@ -380,10 +380,10 @@ const App: React.FC = () => {
             "Партнер",
           ];
           const isNowPartner = partnerValues.some(
-            (v) => newVal && String(newVal).trim() === v,
+            (v) => newVal && String(newVal).trim() === v
           );
           const wasNotPartner = !partnerValues.some(
-            (v) => oldVal && String(oldVal).trim() === v,
+            (v) => oldVal && String(oldVal).trim() === v
           );
           if (isNowPartner && wasNotPartner) {
             matches = true;
@@ -488,18 +488,18 @@ const App: React.FC = () => {
           if (row.source === "deleted") return "Запись удалена";
           if (row.type === "new") {
             const oldRow = allRows.find(
-              (r) => r.type === "old" && r.rm === row.rm,
+              (r) => r.type === "old" && r.rm === row.rm
             );
             if (!oldRow) return "Изменено";
             const changedFields = requiredColumns.filter(
               (key) =>
                 JSON.stringify(oldRow.data[key]) !==
-                JSON.stringify(row.data[key]),
+                JSON.stringify(row.data[key])
             );
             if (changedFields.length === 0) return "Без изменений";
 
             const sortedFields = [...changedFields].sort((a) =>
-              a === "Column 39" ? -1 : 1,
+              a === "Column 39" ? -1 : 1
             );
             return sortedFields
               .map((key) => {
@@ -545,7 +545,7 @@ const App: React.FC = () => {
           const value = row.data[displayColumns[i]] || "";
           return String(value).length;
         }),
-        10,
+        10
       );
       column.width = Math.min(maxLength + 2, 50);
     });
@@ -566,7 +566,11 @@ const App: React.FC = () => {
 
   return (
     <div
-      className={`transition-all duration-300 ${fullscreen ? "fixed inset-0 z-50 overflow-auto bg-white p-2" : "mx-auto max-w-7xl bg-white p-4"}`}
+      className={`transition-all duration-300 ${
+        fullscreen
+          ? "fixed inset-0 z-50 overflow-auto bg-white p-2"
+          : "mx-auto max-w-7xl bg-white p-4"
+      }`}
     >
       {!fullscreen && (
         <h1 className="mb-4 text-2xl font-bold text-gray-800">
@@ -575,28 +579,70 @@ const App: React.FC = () => {
       )}
 
       <div className="mb-6 space-y-4 rounded-lg bg-gray-50 p-4">
-        <div>
-          <label className="mb-1 block font-medium text-gray-700">
-            Первый файл (старый)
-          </label>
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={(e) => handleFileChange(e, setFirstFile)}
-            className="w-full rounded border border-gray-300 px-3 py-2"
-          />
+        <div className="mb-6 grid grid-cols-2 gap-4 rounded-lg bg-gray-50 p-4">
+          {/* Первый файл */}
+          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white p-4">
+            {!firstFile ? (
+              <>
+                <label className="mb-2 block text-center font-medium text-gray-700">
+                  Первый файл (старый)
+                </label>
+                <input
+                  type="file"
+                  accept=".xlsx, .xls"
+                  onChange={(e) => handleFileChange(e, setFirstFile)}
+                  className="hidden"
+                  id="first-file-upload"
+                />
+                <label
+                  htmlFor="first-file-upload"
+                  className="cursor-pointer rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+                >
+                  Выберите файл
+                </label>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center">
+                <div className="mb-2 rounded bg-green-100 px-3 py-1 text-green-800">
+                  Файл загружен
+                </div>
+                <p className="text-center text-gray-700">{firstFile.name}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Второй файл */}
+          <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-white p-4">
+            {!secondFile ? (
+              <>
+                <label className="mb-2 block text-center font-medium text-gray-700">
+                  Второй файл (новый)
+                </label>
+                <input
+                  type="file"
+                  accept=".xlsx, .xls"
+                  onChange={(e) => handleFileChange(e, setSecondFile)}
+                  className="hidden"
+                  id="second-file-upload"
+                />
+                <label
+                  htmlFor="second-file-upload"
+                  className="cursor-pointer rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+                >
+                  Выберите файл
+                </label>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center">
+                <div className="mb-2 rounded bg-green-100 px-3 py-1 text-green-800">
+                  Файл загружен
+                </div>
+                <p className="text-center text-gray-700">{secondFile.name}</p>
+              </div>
+            )}
+          </div>
         </div>
-        <div>
-          <label className="mb-1 block font-medium text-gray-700">
-            Второй файл (новый)
-          </label>
-          <input
-            type="file"
-            accept=".xlsx, .xls"
-            onChange={(e) => handleFileChange(e, setSecondFile)}
-            className="w-full rounded border border-gray-300 px-3 py-2"
-          />
-        </div>
+
         <button
           onClick={handleUpload}
           disabled={loading}
@@ -662,16 +708,16 @@ const App: React.FC = () => {
                         status === "БЫЛО"
                           ? "bg-red-500"
                           : status === "СТАЛО"
-                            ? "bg-green-500"
-                            : status === "НОВАЯ"
-                              ? "bg-blue-500"
-                              : "bg-orange-500"
+                          ? "bg-green-500"
+                          : status === "НОВАЯ"
+                          ? "bg-blue-500"
+                          : "bg-orange-500"
                       }`}
                     >
                       {status}
                     </span>
                   </label>
-                ),
+                )
               )}
             </div>
           </div>
@@ -871,7 +917,11 @@ const App: React.FC = () => {
       {/* Таблица */}
       {diffData.length > 0 && (
         <div
-          className={`overflow-x-auto ${fullscreen ? "max-h-[90vh] border-none" : "mt-2 max-h-screen rounded-lg border shadow-sm"}`}
+          className={`overflow-x-auto ${
+            fullscreen
+              ? "max-h-[90vh] border-none"
+              : "mt-2 max-h-screen rounded-lg border shadow-sm"
+          }`}
         >
           {" "}
           <table className="min-w-full border-collapse text-sm">
@@ -880,18 +930,24 @@ const App: React.FC = () => {
                 {displayColumns.map((col, index) => (
                   <th
                     key={col}
-                    className={`sticky top-0 border border-gray-300 px-3 py-2 text-left text-center font-semibold ${index === 0 ? "left-0 z-50 bg-gray-100" : ""} ${index === 1 ? "z-45 left-[40px] bg-gray-100" : ""} ${index === 2 ? "left-[120px] z-40 bg-gray-100 shadow-md" : ""} ${index > 2 ? "z-10 bg-gray-100" : ""} `}
+                    className={`sticky top-0 border border-gray-300 px-3 py-2 text-left text-center font-semibold ${
+                      index === 0 ? "left-0 z-50 bg-gray-100" : ""
+                    } ${index === 1 ? "z-45 left-[40px] bg-gray-100" : ""} ${
+                      index === 2
+                        ? "left-[120px] z-40 bg-gray-100 shadow-md"
+                        : ""
+                    } ${index > 2 ? "z-10 bg-gray-100" : ""} `}
                     style={{
                       width:
                         index === 0
                           ? "40px"
                           : index === 1
-                            ? "80px"
-                            : index === 2
-                              ? "180px"
-                              : col === "ChangeType"
-                                ? "280px"
-                                : "120px",
+                          ? "80px"
+                          : index === 2
+                          ? "180px"
+                          : col === "ChangeType"
+                          ? "280px"
+                          : "120px",
                       minWidth: index === 0 ? "40px" : undefined,
                       backgroundColor: "#f3f4f6",
                       fontWeight: "600",
@@ -899,19 +955,19 @@ const App: React.FC = () => {
                         index === 0
                           ? "100"
                           : index === 1
-                            ? "100"
-                            : index === 2
-                              ? "100"
-                              : "30",
+                          ? "100"
+                          : index === 2
+                          ? "100"
+                          : "30",
                     }}
                   >
                     {col === "Checked"
                       ? "✅"
                       : col === "Status"
-                        ? "Статус"
-                        : col === "ChangeType"
-                          ? "Тип изменения"
-                          : columnLabels[col]}
+                      ? "Статус"
+                      : col === "ChangeType"
+                      ? "Тип изменения"
+                      : columnLabels[col]}
                   </th>
                 ))}
               </tr>
@@ -942,8 +998,8 @@ const App: React.FC = () => {
                           row.type === "old"
                             ? "hover:bg-red-25"
                             : row.type === "new"
-                              ? "hover:bg-green-25"
-                              : "hover:bg-red-25"
+                            ? "hover:bg-green-25"
+                            : "hover:bg-red-25"
                         }
                       >
                         {displayColumns.map((col, cellIndex) => {
@@ -978,7 +1034,9 @@ const App: React.FC = () => {
                                 String(newVal).trim() !== "" &&
                                 String(newVal).trim() !== "null"
                               ) {
-                                changeText = `Признак: → "${renderValue(newVal)}"`;
+                                changeText = `Признак: → "${renderValue(
+                                  newVal
+                                )}"`;
                               }
                             } else if (row.source === "deleted") {
                               const oldVal = row.data["Column 39"];
@@ -987,12 +1045,14 @@ const App: React.FC = () => {
                                 String(oldVal).trim() !== "" &&
                                 String(oldVal).trim() !== "null"
                               ) {
-                                changeText = `Признак: "${renderValue(oldVal)}" →`;
+                                changeText = `Признак: "${renderValue(
+                                  oldVal
+                                )}" →`;
                               }
                             } else if (row.type === "new") {
                               // Это "СТАЛО" — ищем парную "БЫЛО"
                               const oldRow = allRows.find(
-                                (r) => r.type === "old" && r.rm === row.rm,
+                                (r) => r.type === "old" && r.rm === row.rm
                               );
                               if (oldRow) {
                                 const oldVal = oldRow.data["Column 39"];
@@ -1011,14 +1071,22 @@ const App: React.FC = () => {
 
                                 if (hasOld && hasNew) {
                                   if (oldStr !== newStr) {
-                                    changeText = `Признак: "${renderValue(oldVal)}" → "${renderValue(newVal)}"`;
+                                    changeText = `Признак: "${renderValue(
+                                      oldVal
+                                    )}" → "${renderValue(newVal)}"`;
                                   } else {
-                                    changeText = `Признак: "${renderValue(newVal)}"`;
+                                    changeText = `Признак: "${renderValue(
+                                      newVal
+                                    )}"`;
                                   }
                                 } else if (hasOld) {
-                                  changeText = `Признак: "${renderValue(oldVal)}" →`;
+                                  changeText = `Признак: "${renderValue(
+                                    oldVal
+                                  )}" →`;
                                 } else if (hasNew) {
-                                  changeText = `Признак: → "${renderValue(newVal)}"`;
+                                  changeText = `Признак: → "${renderValue(
+                                    newVal
+                                  )}"`;
                                 }
                               } else {
                                 // Нет "БЫЛО" — возможно, ошибка, но можно оставить
@@ -1027,7 +1095,9 @@ const App: React.FC = () => {
                                   newVal != null &&
                                   String(newVal).trim() !== ""
                                 ) {
-                                  changeText = `Признак: → "${renderValue(newVal)}"`;
+                                  changeText = `Признак: → "${renderValue(
+                                    newVal
+                                  )}"`;
                                 }
                               }
                             }
@@ -1093,34 +1163,56 @@ const App: React.FC = () => {
                                 cellIndex === 0
                                   ? "sticky left-0 z-50 bg-white text-center"
                                   : cellIndex === 1
-                                    ? "z-45 sticky left-[40px] bg-white font-bold"
-                                    : cellIndex === 2
-                                      ? "sticky left-[120px] z-40 bg-white"
-                                      : "relative"
-                              } ${cellIndex === 2 && fieldChanged && !isChangeFilterActive ? "bg-yellow-200" : ""} ${cellIndex > 2 && fieldChanged && !isChangeFilterActive ? "bg-yellow-200" : ""} ${isTargetField ? "font-bold text-blue-700" : ""} ${col === "ChangeType" ? "text-xs italic text-red-600" : ""} ${isChecked ? "bg-gray-50 text-gray-500 line-through" : ""} ${
+                                  ? "z-45 sticky left-[40px] bg-white font-bold"
+                                  : cellIndex === 2
+                                  ? "sticky left-[120px] z-40 bg-white"
+                                  : "relative"
+                              } ${
+                                cellIndex === 2 &&
+                                fieldChanged &&
+                                !isChangeFilterActive
+                                  ? "bg-yellow-200"
+                                  : ""
+                              } ${
+                                cellIndex > 2 &&
+                                fieldChanged &&
+                                !isChangeFilterActive
+                                  ? "bg-yellow-200"
+                                  : ""
+                              } ${
+                                isTargetField ? "font-bold text-blue-700" : ""
+                              } ${
+                                col === "ChangeType"
+                                  ? "text-xs italic text-red-600"
+                                  : ""
+                              } ${
+                                isChecked
+                                  ? "bg-gray-50 text-gray-500 line-through"
+                                  : ""
+                              } ${
                                 row.type === "old" && !isChecked
                                   ? "bg-red-50 text-red-700"
                                   : row.type === "new" &&
-                                      row.source !== "new" &&
-                                      !isChecked
-                                    ? "bg-green-50 text-green-700"
-                                    : row.source === "new" && !isChecked
-                                      ? "bg-blue-50 font-bold text-blue-800"
-                                      : row.source === "deleted" && !isChecked
-                                        ? "bg-red-50 text-red-500"
-                                        : ""
+                                    row.source !== "new" &&
+                                    !isChecked
+                                  ? "bg-green-50 text-green-700"
+                                  : row.source === "new" && !isChecked
+                                  ? "bg-blue-50 font-bold text-blue-800"
+                                  : row.source === "deleted" && !isChecked
+                                  ? "bg-red-50 text-red-500"
+                                  : ""
                               } `}
                               style={{
                                 width:
                                   cellIndex === 0
                                     ? "40px"
                                     : cellIndex === 1
-                                      ? "80px"
-                                      : cellIndex === 2
-                                        ? "180px"
-                                        : col === "ChangeType"
-                                          ? "280px"
-                                          : "120px",
+                                    ? "80px"
+                                    : cellIndex === 2
+                                    ? "180px"
+                                    : col === "ChangeType"
+                                    ? "280px"
+                                    : "120px",
                                 minWidth: cellIndex === 0 ? "40px" : undefined,
                                 top: 0,
                                 height: "auto",
