@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/excelTransformer/static/css/main.32352644.css",
+    "main.js": "/excelTransformer/static/js/main.5bbac099.js",
+    "static/js/453.bd57ca15.chunk.js": "/excelTransformer/static/js/453.bd57ca15.chunk.js",
+    "index.html": "/excelTransformer/index.html",
+    "main.32352644.css.map": "/excelTransformer/static/css/main.32352644.css.map",
+    "main.5bbac099.js.map": "/excelTransformer/static/js/main.5bbac099.js.map",
+    "453.bd57ca15.chunk.js.map": "/excelTransformer/static/js/453.bd57ca15.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.32352644.css",
+    "static/js/main.5bbac099.js"
+  ]
+}
