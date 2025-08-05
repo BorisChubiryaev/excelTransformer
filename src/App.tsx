@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import * as ExcelJS from "exceljs";
-import './ExcelTransformer.css';
 
 const App: React.FC = () => {
   const [firstFile, setFirstFile] = useState<File | null>(null);
